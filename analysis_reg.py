@@ -18,6 +18,8 @@ lasso.mean()
 dt.mean()
 # %%
 rf.mean()
+# %%
+gb.mean()
 
 # %%
 gb.mean()

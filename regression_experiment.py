@@ -14,7 +14,7 @@ regression_dataset_names_sample = regression_dataset_names[:5]
 # %%
 
 modelitos = [
-    LinearRegression()
+    LinearRegression(),
     Lasso(),
     RandomForestRegressor(),
     DecisionTreeRegressor(),

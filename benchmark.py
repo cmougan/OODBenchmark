@@ -88,8 +88,9 @@ def benchmark_experiment(datasets: list, model, classification: bool = False):
 
                     train_error = roc_auc_score(y_tr, pred_train)
                     test_error = roc_auc_score(y_tr, pred_test)
+                    ood_error = roc_auc_score(y_ood, pred_ood)
                     generalizationError = test_error - train_error
-                    ood_error = roc_auc_score(y_ood, pred_ood) - test_error
+                    ood_performance = ood_error - test_error
                 else:
                     ## Test predictions
                     pred_test = cross_val_predict(
@@ -110,13 +111,22 @@ def benchmark_experiment(datasets: list, model, classification: bool = False):
 
                     train_error = mean_squared_error(pred_train, y_tr)
                     test_error = mean_squared_error(pred_test, y_tr)
+                    ood_error = mean_squared_error(pred_ood, y_ood)
+
                     generalizationError = test_error - train_error
-                    ood_error = mean_squared_error(pred_ood, y_ood) - test_error
+                    ood_performance = ood_error - test_error
 
                 # Append Results
                 model_name = str(type(model)).split(".")[-1]
                 model_name = re.sub("[^A-Za-z0-9]+", "", model_name)
-                results[dataset] = [generalizationError, ood_error, model_name]
+                results[dataset] = [
+                    train_error,
+                    test_error,
+                    ood_error,
+                    generalizationError,
+                    ood_performance,
+                    model_name,
+                ]
 
         except Exception:
             print(traceback.format_exc())
@@ -124,5 +134,12 @@ def benchmark_experiment(datasets: list, model, classification: bool = False):
             pass
 
     df = pd.DataFrame(data=results).T
-    df.columns = ["generalizationError", "oodError", "model"]
+    df.columns = [
+        "trainError",
+        "testError",
+        "oodError",
+        "generalizationError",
+        "oodPerformance",
+        "model",
+    ]
     df.to_csv("results/" + model_name + extension + ".csv")

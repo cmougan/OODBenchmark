@@ -7,10 +7,9 @@ files
 # %%
 lr = pd.read_csv("results/LogisticRegression_clas.csv", index_col=0)
 
-#lasso = pd.read_csv("results/Lasso_reg.csv", index_col=0)
-#dt = pd.read_csv("results/DecisionTreeRegressor_reg.csv", index_col=0)
-#rf = pd.read_csv("results/RandomForestRegressor_reg.csv", index_col=0)
-#gb = pd.read_csv("results/GradientBoostingRegressor_reg.csv", index_col=0)
+dt = pd.read_csv("results/DecisionTreeClassifier_clas.csv", index_col=0)
+rf = pd.read_csv("results/RandomForestClassifier_clas.csv", index_col=0)
+gb = pd.read_csv("results/GradientBoostingClassifier_clas.csv", index_col=0)
 # %%
 lr.mean()
 # %%
