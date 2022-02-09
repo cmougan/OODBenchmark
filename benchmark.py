@@ -1,46 +1,36 @@
 # %%
 from pmlb import fetch_data
-from pmlb import classification_dataset_names, regression_dataset_names
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import Lasso
-from sklearn.model_selection import cross_val_predict, StratifiedKFold
+from sklearn.model_selection import cross_val_predict, KFold
 from sklearn.metrics import mean_squared_error
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
 from collections import defaultdict
 import warnings
+import re
+import traceback
+
 
 warnings.filterwarnings("ignore")
 
-
-# %%
-classification_dataset_names
-classification_dataset_names_sample = [
-    "allhypo",
-    "allrep",
-]
-# %%
-
-regression_dataset_names_sample = regression_dataset_names[:20]
-
-
-# %%
-# Returns a pandas DataFrame
-def benchmark():
+def benchmark_experiment(
+    datasets: list,
+    model,
+):
 
     results = defaultdict()
-    for i, dataset in enumerate(regression_dataset_names_sample):
+    for i, dataset in enumerate(datasets):
         try:
             # Initialise the scaler
             standard_scaler = StandardScaler()
 
             # Load the dataset and split it
             X, y = fetch_data(dataset, return_X_y=True, local_cache_dir="data/")
-            print(X.shape)
 
             # Scale the dataset
             X = standard_scaler.fit_transform(X)
+            y = standard_scaler.fit_transform(y.reshape(-1, 1))
 
             # Back to dataframe
             X = pd.DataFrame(X, columns=["Var %d" % (i + 1) for i in range(X.shape[1])])
@@ -73,16 +63,14 @@ def benchmark():
                 y_up = data_up[["target"]].target.values
 
                 # Fit the estimator
-                model = Lasso()
+                # model = Lasso()
 
                 ## Test predictions
                 pred_test = cross_val_predict(
                     estimator=model,
                     X=X_tr,
                     y=y_tr,
-                    cv=StratifiedKFold(
-                        n_splits=10, shuffle=True, random_state=0
-                    ),
+                    cv=KFold(n_splits=5, shuffle=True, random_state=0),
                 )
 
                 ## Train
@@ -96,19 +84,21 @@ def benchmark():
 
                 # Error Calculation
                 train_error = mean_squared_error(pred_train, y_tr)
-                generalizationError = mean_squared_error(pred_test, y_tr)
-                ood_error = mean_squared_error(pred_ood, y_ood) - generalizationError
+                test_error = mean_squared_error(pred_test, y_tr)
+                generalizationError = test_error - train_error
+                ood_error = mean_squared_error(pred_ood, y_ood) - test_error
 
                 # Append Results
-                results[dataset] = [train_error, generalizationError, ood_error]
-        except:
-            print(dataset)
+                model_name = str(type(model)).split(".")[-1]
+                model_name = re.sub("[^A-Za-z0-9]+", "", model_name)
+                results[dataset] = [generalizationError, ood_error, model_name]
+
+        except Exception:
+            print(traceback.format_exc())
+            print("Not Working:", dataset)
             pass
 
     df = pd.DataFrame(data=results).T
-    df.columns = ["trainError", "testError", "oodError"]
-    df.to_csv("results/regression.csv")
+    df.columns = ["generalizationError", "oodError", "model"]
+    df.to_csv("results/" + model_name + "_reg.csv")
 
-
-# %%
-benchmark()
