@@ -2,7 +2,7 @@
 from pmlb import fetch_data
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import cross_val_predict, KFold
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, roc_auc_score
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
@@ -11,13 +11,17 @@ import warnings
 import re
 import traceback
 
+import pdb
 
 warnings.filterwarnings("ignore")
 
-def benchmark_experiment(
-    datasets: list,
-    model,
-):
+
+def benchmark_experiment(datasets: list, model, classification: bool = False):
+
+    if classification == True:
+        extension = "_clas"
+    else:
+        extension = "_reg"
 
     results = defaultdict()
     for i, dataset in enumerate(datasets):
@@ -62,31 +66,52 @@ def benchmark_experiment(
                 y_sub = data_sub[["target"]].target.values
                 y_up = data_up[["target"]].target.values
 
-                # Fit the estimator
-                # model = Lasso()
-
-                ## Test predictions
-                pred_test = cross_val_predict(
-                    estimator=model,
-                    X=X_tr,
-                    y=y_tr,
-                    cv=KFold(n_splits=5, shuffle=True, random_state=0),
-                )
-
-                ## Train
-                model.fit(X_tr, y_tr)
-                pred_train = model.predict(X_tr)
-
-                ## OOD
-                X_ood = X_sub.append(X_up)
-                y_ood = np.concatenate((y_sub, y_up))
-                pred_ood = model.predict(X_ood)
-
                 # Error Calculation
-                train_error = mean_squared_error(pred_train, y_tr)
-                test_error = mean_squared_error(pred_test, y_tr)
-                generalizationError = test_error - train_error
-                ood_error = mean_squared_error(pred_ood, y_ood) - test_error
+                if classification:
+                    ## Test predictions
+                    pred_test = cross_val_predict(
+                        estimator=model,
+                        X=X_tr,
+                        y=y_tr,
+                        cv=KFold(n_splits=5, shuffle=True, random_state=0),
+                        method="predict_proba",
+                    )[:, 0]
+
+                    ## Train
+                    model.fit(X_tr, y_tr)
+                    pred_train = model.predict_proba(X_tr)[:, 0]
+
+                    ## OOD
+                    X_ood = X_sub.append(X_up)
+                    y_ood = np.concatenate((y_sub, y_up))
+                    pred_ood = model.predict_proba(X_ood)[:, 0]
+
+                    train_error = roc_auc_score(y_tr, pred_train)
+                    test_error = roc_auc_score(y_tr, pred_test)
+                    generalizationError = test_error - train_error
+                    ood_error = roc_auc_score(y_ood, pred_ood) - test_error
+                else:
+                    ## Test predictions
+                    pred_test = cross_val_predict(
+                        estimator=model,
+                        X=X_tr,
+                        y=y_tr,
+                        cv=KFold(n_splits=5, shuffle=True, random_state=0),
+                    )
+
+                    ## Train
+                    model.fit(X_tr, y_tr)
+                    pred_train = model.predict(X_tr)
+
+                    ## OOD
+                    X_ood = X_sub.append(X_up)
+                    y_ood = np.concatenate((y_sub, y_up))
+                    pred_ood = model.predict(X_ood)
+
+                    train_error = mean_squared_error(pred_train, y_tr)
+                    test_error = mean_squared_error(pred_test, y_tr)
+                    generalizationError = test_error - train_error
+                    ood_error = mean_squared_error(pred_ood, y_ood) - test_error
 
                 # Append Results
                 model_name = str(type(model)).split(".")[-1]
@@ -100,5 +125,4 @@ def benchmark_experiment(
 
     df = pd.DataFrame(data=results).T
     df.columns = ["generalizationError", "oodError", "model"]
-    df.to_csv("results/" + model_name + "_reg.csv")
-
+    df.to_csv("results/" + model_name + extension + ".csv")
