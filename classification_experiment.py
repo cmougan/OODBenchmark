@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore")
 
 
 # %%
-classification_dataset_names_sample = classification_dataset_names[2:7]
+classification_dataset_names_sample = classification_dataset_names[2:10]
 # %%
 
 modelitos = [

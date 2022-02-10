@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore")
 
 
 # %%
-regression_dataset_names_sample = regression_dataset_names[:5]
+regression_dataset_names_sample = regression_dataset_names[:10]
 # %%
 
 modelitos = [

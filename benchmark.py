@@ -34,7 +34,8 @@ def benchmark_experiment(datasets: list, model, classification: bool = False):
 
             # Scale the dataset
             X = standard_scaler.fit_transform(X)
-            y = standard_scaler.fit_transform(y.reshape(-1, 1))
+            if classification == False:
+                y = standard_scaler.fit_transform(y.reshape(-1, 1))
 
             # Back to dataframe
             X = pd.DataFrame(X, columns=["Var %d" % (i + 1) for i in range(X.shape[1])])
