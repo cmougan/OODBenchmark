@@ -33,7 +33,7 @@ df.groupby("model").mean()
 # %%
 plt.figure(figsize=(15, 9))
 plt.title(
-    "Out-of-distribution error classification on {} datasets".format(
+    "Out-of-distribution model performance on {} datasets".format(
         df["data"].nunique()
     )
 )
@@ -54,3 +54,5 @@ plt.grid(True, axis="y")
 plt.ylabel("OOD Error")
 plt.xlabel("")
 plt.savefig("images/classOODerror.png")
+
+# %%

@@ -76,7 +76,7 @@ def benchmark_experiment(datasets: list, model, classification: bool = False):
                         y=y_tr,
                         cv=KFold(n_splits=5, shuffle=True, random_state=0),
                         method="predict_proba",
-                    )[:, 0]
+                    )[:, 1]
 
                     ## Train
                     model.fit(X_tr, y_tr)
