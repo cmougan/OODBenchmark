@@ -120,7 +120,8 @@ def benchmark_experiment(datasets: list, model, classification: bool = False):
                 # Append Results
                 model_name = str(type(model)).split(".")[-1]
                 model_name = re.sub("[^A-Za-z0-9]+", "", model_name)
-                results[dataset] = [
+                name = dataset + "_column_" + col
+                results[name] = [
                     train_error,
                     test_error,
                     ood_error,
