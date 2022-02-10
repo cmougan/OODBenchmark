@@ -37,9 +37,20 @@ plt.title(
         df["data"].nunique()
     )
 )
-sns.boxplot(data=df, x="model", y="oodPerformance", notch=True)
+sns.boxplot(data=df, x="model", y="oodError", notch=True)
 plt.grid(True, axis="y")
 plt.ylabel("OOD Performance")
 plt.xlabel("")
 plt.savefig("images/classOODperf.png")
 # %%
+plt.figure(figsize=(15, 9))
+plt.title(
+    "Out-of-distribution error classification on {} datasets".format(
+        df["data"].nunique()
+    )
+)
+sns.boxplot(data=df, x="model", y="oodPerformance", notch=True)
+plt.grid(True, axis="y")
+plt.ylabel("OOD Error")
+plt.xlabel("")
+plt.savefig("images/classOODerror.png")

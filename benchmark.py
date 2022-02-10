@@ -80,12 +80,12 @@ def benchmark_experiment(datasets: list, model, classification: bool = False):
 
                     ## Train
                     model.fit(X_tr, y_tr)
-                    pred_train = model.predict_proba(X_tr)[:, 0]
+                    pred_train = model.predict_proba(X_tr)[:, 1]
 
                     ## OOD
                     X_ood = X_sub.append(X_up)
                     y_ood = np.concatenate((y_sub, y_up))
-                    pred_ood = model.predict_proba(X_ood)[:, 0]
+                    pred_ood = model.predict_proba(X_ood)[:, 1]
 
                     train_error = roc_auc_score(y_tr, pred_train)
                     test_error = roc_auc_score(y_tr, pred_test)
