@@ -34,7 +34,7 @@ df.groupby("model").mean()
 plt.figure(figsize=(15, 9))
 plt.title(
     "Out-of-distribution model performance on {} datasets for {} columns".format(
-        df["data"].nunique(),df.shape[0]
+        df["data"].nunique(), df.shape[0]
     )
 )
 sns.boxplot(data=df, x="model", y="oodError", notch=True)
@@ -46,7 +46,7 @@ plt.savefig("images/classOODperf.png")
 plt.figure(figsize=(15, 9))
 plt.title(
     "Out-of-distribution error classification on {} datasets for {} columns".format(
-        df["data"].nunique(),df.shape[0]
+        df["data"].nunique(), df.shape[0]
     )
 )
 sns.boxplot(data=df, x="model", y="oodPerformance", notch=True)
