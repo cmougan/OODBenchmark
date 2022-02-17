@@ -20,7 +20,8 @@ x1, x2 = np.random.multivariate_normal(mean, cov, samples).T
 
 # Different values
 mean = [0, 0]
-cov = [[sigma, 1], [1, sigma]]
+out= 3
+cov = [[sigma, out], [out ,sigma]]
 x11, x22 = np.random.multivariate_normal(mean, cov, samples).T
 
 # %%
@@ -28,20 +29,18 @@ x11, x22 = np.random.multivariate_normal(mean, cov, samples).T
 plt.figure()
 sns.histplot(x1, color="r")
 sns.histplot(x11)
-plt.show()
+
 
 # %%
 
 plt.figure()
 plt.scatter(x1, x2, label="Init")
 plt.scatter(x11, x22, label="Different")
-
-plt.show()
 # %%
 ## Kolmorov Smirnov Stat
 ### They are the same p(x) = p(x')
 print(ks_2samp(x11, x1))
-print(ks_2samp(x1, x1))
+#print(ks_2samp(x1, x1))
 
 # %%
 df = pd.DataFrame(data=[x1, x2]).T
@@ -74,7 +73,4 @@ print(ks_2samp(x11, x1))
 # %%
 print(ks_2samp(exp_fake["Shap2"], exp["Shap2"]))
 print(ks_2samp(x22, x2))
-# %%
-exp["target"] = 1
-exp_fake["target"] = 0
 # %%
