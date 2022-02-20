@@ -20,8 +20,8 @@ x1, x2 = np.random.multivariate_normal(mean, cov, samples).T
 
 # Different values
 mean = [0, 0]
-out= 3
-cov = [[sigma, out], [out ,sigma]]
+out = 1
+cov = [[sigma, out], [out, sigma]]
 x11, x22 = np.random.multivariate_normal(mean, cov, samples).T
 
 # %%
@@ -36,11 +36,6 @@ sns.histplot(x11)
 plt.figure()
 plt.scatter(x1, x2, label="Init")
 plt.scatter(x11, x22, label="Different")
-# %%
-## Kolmorov Smirnov Stat
-### They are the same p(x) = p(x')
-print(ks_2samp(x11, x1))
-#print(ks_2samp(x1, x1))
 
 # %%
 df = pd.DataFrame(data=[x1, x2]).T
@@ -53,6 +48,7 @@ X_tr, X_te, y_tr, y_te = train_test_split(df.drop(columns="target"), df[["target
 # %%
 model = GradientBoostingRegressor()
 model.fit(X_tr, y_tr)
+y_hat = model.predict(X_te)
 # %%
 ## Real explanation
 explainer = shap.Explainer(model)
@@ -63,14 +59,19 @@ exp = pd.DataFrame(
 # %%
 ## Fake explanation
 fake = pd.DataFrame(data=[x11, x22]).T
+y_hat1 = model.predict(fake)
 shap_values = explainer(fake)
 exp_fake = pd.DataFrame(
     data=fake.values, columns=["Shap%d" % (i + 1) for i in range(2)]
 )
 # %%
+print("Feat 1")
 print(ks_2samp(exp_fake["Shap1"], exp["Shap1"]))
 print(ks_2samp(x11, x1))
 # %%
+print("Feat 2")
 print(ks_2samp(exp_fake["Shap2"], exp["Shap2"]))
 print(ks_2samp(x22, x2))
 # %%
+print("Target")
+print(ks_2samp(y_hat, y_hat1))
