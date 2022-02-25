@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 
 from sklearn.ensemble import GradientBoostingRegressor
 import shap
+
 # %%
 np.random.random(4)
 # %%
@@ -39,7 +40,7 @@ plt.scatter(x1, x2, label="Init")
 plt.scatter(x11, x22, label="Different")
 
 # %%
-df = pd.DataFrame(data=[x1, x2,x3]).T
+df = pd.DataFrame(data=[x1, x2, x3]).T
 df.columns = ["Var%d" % (i + 1) for i in range(df.shape[1])]
 # df["target"] = np.where(df["Var1"] * df["Var2"] > 0, 1, 0)
 df["target"] = df["Var1"] * df["Var2"]
@@ -59,7 +60,7 @@ exp = pd.DataFrame(
 )
 # %%
 ## Fake explanation
-fake = pd.DataFrame(data=[x11, x22,x33]).T
+fake = pd.DataFrame(data=[x11, x22, x33]).T
 y_hat1 = model.predict(fake)
 shap_values = explainer(fake)
 exp_fake = pd.DataFrame(
