@@ -30,6 +30,7 @@ plt.figure()
 sns.histplot(x1, color="r")
 sns.histplot(x11)
 
+# %%
 
 # %%
 
@@ -41,7 +42,7 @@ plt.scatter(x11, x22, label="Different")
 df = pd.DataFrame(data=[x1, x2]).T
 df.columns = ["Var%d" % (i + 1) for i in range(df.shape[1])]
 # df["target"] = np.where(df["Var1"] * df["Var2"] > 0, 1, 0)
-df["target"] = df["Var1"] * df["Var2"]
+df["target"] = df["Var1"] * df["Var2"] + np.random.normal(0,0.1,samples)
 # %%
 ## Fit our ML model
 X_tr, X_te, y_tr, y_te = train_test_split(df.drop(columns="target"), df[["target"]])
@@ -75,3 +76,5 @@ print(ks_2samp(x22, x2))
 # %%
 print("Target")
 print(ks_2samp(y_hat, y_hat1))
+
+# %%
