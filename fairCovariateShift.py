@@ -19,7 +19,7 @@ from collections import defaultdict
 
 # %%
 df = pd.read_csv("data/adult.csv")
-df = df.drop(columns=["fnlwgt",'capitalgain','capitalloss'])
+df = df.drop(columns=["fnlwgt", "capitalgain", "capitalloss"])
 df["class"] = np.where(df["class"] == "<=50K", 1, 0)
 df["sex"] = np.where(df["sex"] == "Male", 1, 0)
 # %%
@@ -39,14 +39,20 @@ education_test = [
     # "Bachelors",
     # "Some-college",
     "Doctorate",
-    #"Masters",
+    # "Masters",
     "Prof-school",
 ]
-#education_test = ["5th-6th"]
+# education_test = ["5th-6th"]
 # %%
 print(df_tr[(df_tr.race == "Black") & (df_tr.education.isin(education_test))].shape)
-df_te = df_te.append(df_tr[(df_tr.race == "Black") & (df_tr.education.isin(education_test))])
-df_tr = df_tr[~df_tr.index.isin(df_tr[(df_tr.race == "Black") & (df_tr.education.isin(education_test))].index)]
+df_te = df_te.append(
+    df_tr[(df_tr.race == "Black") & (df_tr.education.isin(education_test))]
+)
+df_tr = df_tr[
+    ~df_tr.index.isin(
+        df_tr[(df_tr.race == "Black") & (df_tr.education.isin(education_test))].index
+    )
+]
 print(df_tr.shape)
 print(df_te.shape)
 

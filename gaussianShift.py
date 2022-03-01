@@ -42,7 +42,7 @@ plt.scatter(x11, x22, label="Different")
 df = pd.DataFrame(data=[x1, x2]).T
 df.columns = ["Var%d" % (i + 1) for i in range(df.shape[1])]
 # df["target"] = np.where(df["Var1"] * df["Var2"] > 0, 1, 0)
-df["target"] = df["Var1"] * df["Var2"] + np.random.normal(0,0.1,samples)
+df["target"] = df["Var1"] * df["Var2"] + np.random.normal(0, 0.1, samples)
 # %%
 ## Fit our ML model
 X_tr, X_te, y_tr, y_te = train_test_split(df.drop(columns="target"), df[["target"]])
