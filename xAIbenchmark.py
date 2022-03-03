@@ -16,6 +16,8 @@ from sklearn.linear_model import Lasso, LinearRegression
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.tree import DecisionTreeRegressor
 import warnings
+from fairtools.xaiUtils import ShapEstimator
+import xgboost
 
 
 warnings.filterwarnings("ignore")
@@ -59,6 +61,11 @@ def benchmark_experiment(datasets: list, model, classification: str = "classific
             data = X.copy()
             data["target"] = y
 
+            # Min and max data limits for the experiment
+            if X.shape[0] < 100:
+                continue
+            if X.shape[0] > 100_000:
+                continue
             # Train test splitting points
             fracc = 0.33
             oneThird = int(data.shape[0] * fracc)
@@ -134,22 +141,30 @@ def benchmark_experiment(datasets: list, model, classification: str = "classific
                     generalizationError = test_error - train_error
                     ood_performance = ood_error - test_error
                 elif classification == "explainableAI":
+                    # Explainer predictor
+                    se = ShapEstimator(model=xgboost.XGBRegressor())
+                    shap_pred_tr = cross_val_predict(se, X_tr, y_tr, cv=3)
                     ## Test predictions
+
                     pred_test = cross_val_predict(
                         estimator=model,
-                        X=X_tr,
+                        X=shap_pred_tr,
                         y=y_tr,
                         cv=KFold(n_splits=5, shuffle=True, random_state=0),
                     )
 
                     ## Train
-                    model.fit(X_tr, y_tr)
-                    pred_train = model.predict(X_tr)
+                    se.fit(X_tr, y_tr)
+                    model.fit(shap_pred_tr, y_tr)
+                    pred_train = model.predict(shap_pred_tr)
 
-                    ## OOD
+                    ## Generate OOD Shap data
                     X_ood = X_sub.append(X_up)
                     y_ood = np.concatenate((y_sub, y_up))
-                    pred_ood = model.predict(X_ood)
+                    shap_pred_ood = se.predict(X_ood)
+
+                    ## OOD
+                    pred_ood = model.predict(shap_pred_ood)
 
                     train_error = mean_squared_error(pred_train, y_tr)
                     test_error = mean_squared_error(pred_test, y_tr)
@@ -174,6 +189,7 @@ def benchmark_experiment(datasets: list, model, classification: str = "classific
         except Exception:
             print(traceback.format_exc())
             print("Not Working:", dataset)
+            print("Dataset shape:", len(dataset))
             pass
 
     df = pd.DataFrame(data=results).T
@@ -189,7 +205,7 @@ def benchmark_experiment(datasets: list, model, classification: str = "classific
 
 
 # %%
-regression_dataset_names_sample = regression_dataset_names[:1]
+regression_dataset_names_sample = regression_dataset_names[:10]
 # %%
 
 modelitos = [
@@ -197,7 +213,9 @@ modelitos = [
 ]
 for m in modelitos:
     benchmark_experiment(
-        datasets=regression_dataset_names_sample, model=m, classification="regresd"
+        datasets=regression_dataset_names_sample,
+        model=m,
+        classification="explainableAI",
     )
 
 # %%

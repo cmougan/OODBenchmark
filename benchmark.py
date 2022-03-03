@@ -39,6 +39,12 @@ def benchmark_experiment(datasets: list, model, classification: bool = False):
             data = X.copy()
             data["target"] = y
 
+            # Min and max data limits for the experiment
+            if X.shape[0] < 100:
+                continue
+            if X.shape[0] > 100_000:
+                continue
+
             # Train test splitting points
             fracc = 0.33
             oneThird = int(data.shape[0] * fracc)
