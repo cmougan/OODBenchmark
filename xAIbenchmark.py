@@ -1,3 +1,4 @@
+# %%
 from pmlb import fetch_data
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import cross_val_predict, KFold
@@ -19,13 +20,25 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
+# %%
+def benchmark_experiment(datasets: list, model, classification: str = "classification"):
 
-def benchmark_experiment(datasets: list, model, classification: bool = False):
+    assert classification in [
+        "classification",
+        "regression",
+        "explainableAI",
+    ], "Classification type introduced --{}-- does not match: classification,regression,explainableAI".format(
+        classification
+    )
 
-    if classification == True:
+    if classification == "classification":
         extension = "_clas"
-    else:
+    elif classification == "regression":
         extension = "_reg"
+    elif classification == "explainableAI":
+        extension = "_explain"
+    else:
+        raise "Classification type not contained"
 
     results = defaultdict()
     for i, dataset in enumerate(datasets):
@@ -72,7 +85,7 @@ def benchmark_experiment(datasets: list, model, classification: bool = False):
                 y_up = data_up[["target"]].target.values
 
                 # Error Calculation
-                if classification:
+                if classification == "classification":
                     ## Test predictions
                     pred_test = cross_val_predict(
                         estimator=model,
@@ -96,7 +109,31 @@ def benchmark_experiment(datasets: list, model, classification: bool = False):
                     ood_error = roc_auc_score(y_ood, pred_ood)
                     generalizationError = test_error - train_error
                     ood_performance = ood_error - test_error
-                else:
+                elif classification == "regression":
+                    ## Test predictions
+                    pred_test = cross_val_predict(
+                        estimator=model,
+                        X=X_tr,
+                        y=y_tr,
+                        cv=KFold(n_splits=5, shuffle=True, random_state=0),
+                    )
+
+                    ## Train
+                    model.fit(X_tr, y_tr)
+                    pred_train = model.predict(X_tr)
+
+                    ## OOD
+                    X_ood = X_sub.append(X_up)
+                    y_ood = np.concatenate((y_sub, y_up))
+                    pred_ood = model.predict(X_ood)
+
+                    train_error = mean_squared_error(pred_train, y_tr)
+                    test_error = mean_squared_error(pred_test, y_tr)
+                    ood_error = mean_squared_error(pred_ood, y_ood)
+
+                    generalizationError = test_error - train_error
+                    ood_performance = ood_error - test_error
+                elif classification == "explainableAI":
                     ## Test predictions
                     pred_test = cross_val_predict(
                         estimator=model,
@@ -152,18 +189,15 @@ def benchmark_experiment(datasets: list, model, classification: bool = False):
 
 
 # %%
-
-
-# %%
-regression_dataset_names_sample = regression_dataset_names[:10]
+regression_dataset_names_sample = regression_dataset_names[:1]
 # %%
 
 modelitos = [
-    LinearRegression(),
-    Lasso(),
-    RandomForestRegressor(),
-    DecisionTreeRegressor(),
     GradientBoostingRegressor(),
 ]
 for m in modelitos:
-    benchmark_experiment(datasets=regression_dataset_names_sample, model=m)
+    benchmark_experiment(
+        datasets=regression_dataset_names_sample, model=m, classification="regresd"
+    )
+
+# %%

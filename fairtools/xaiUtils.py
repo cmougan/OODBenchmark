@@ -7,11 +7,18 @@ class ShapEstimator(BaseEstimator, ClassifierMixin):
     """
     A ShapValues estimator based on tree explainer.
     Returns the explanations of the data provided self.predict(X)
+
+    Example:
+
+    import xgboost
+    from sklearn.model_selection import cross_val_predict
+    X, y = shap.datasets.boston()
+    se = ShapEstimator(model=xgboost.XGBRegressor())
+    shap_pred = cross_val_predict(se, X, y, cv=3)
     """
 
-    def __init__(self, model, explainer):
+    def __init__(self, model):
         self.model = model
-        self.explainer = explainer
 
     def fit(self, X, y):
 
@@ -35,12 +42,3 @@ class ShapEstimator(BaseEstimator, ClassifierMixin):
         shap_values = explainer(X).values
 
         return shap_values
-
-
-"""
-## Test ##
-import xgboost
-X, y = shap.datasets.boston()
-y_pred = cross_val_predict(xgboost.XGBRegressor(), X, y, cv=3)
-
-"""
