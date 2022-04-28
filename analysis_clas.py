@@ -29,7 +29,8 @@ df = df.assign(data=split[0], column=split[1])
 df = df.drop(columns="index")
 
 # %%
-df.groupby("model").mean()
+df.groupby("model").agg(['mean','std'])
+
 # %%
 plt.figure(figsize=(15, 9))
 plt.title(
