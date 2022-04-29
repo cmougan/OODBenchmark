@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from matplotlib import rcParams
-
+plt.rcParams.update({'font.size': 22})
 # sns.set_style(style="whitegrid")
 # plt.style.use('seaborn-whitegrid')
 rcParams["axes.labelsize"] = 14

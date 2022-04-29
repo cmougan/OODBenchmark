@@ -5,7 +5,7 @@ import numpy as np
 import seaborn as sns
 sns.set_style("whitegrid")
 import matplotlib.pyplot as plt
-
+plt.rcParams.update({'font.size': 22})
 files = os.listdir("results")
 files
 # %%

@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+plt.rcParams.update({'font.size': 22})
 from matplotlib import rcParams
 
 # sns.set_style(style="whitegrid")
