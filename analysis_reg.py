@@ -30,6 +30,7 @@ df = df.assign(data=split[0], column=split[1])
 df = df.drop(columns="index")
 # %%
 df = df[df["generalizationError"] < 1000]
+df = df[df["oodPerformance"] < 1000]
 # %%
 df.groupby("model").agg(["mean", "std"])
 
