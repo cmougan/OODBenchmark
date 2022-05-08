@@ -32,7 +32,7 @@ df = df.drop(columns="index")
 df = df[df["generalizationError"] < 1000]
 df = df[df["oodPerformance"] < 1000]
 # %%
-df.groupby("model").agg(["mean", "std"])
+df.groupby("model").agg(["mean", "std"]).to_csv("results/reg_results.csv")
 
 # %%
 plt.figure(figsize=(15, 9))
@@ -44,7 +44,7 @@ plt.title(
 sns.boxplot(data=df, x="model", y="oodError", notch=True)
 plt.grid(True, axis="y")
 plt.ylabel("MSE")
-plt.ylim([-1,6])
+plt.ylim([-1, 6])
 plt.xlabel("")
 plt.savefig("images/regOODperf.png")
 # %%
@@ -57,7 +57,7 @@ plt.title(
 sns.boxplot(data=df, x="model", y="oodPerformance", notch=True)
 plt.grid(True, axis="y")
 plt.ylabel("OOD Error")
-plt.ylim([-1,6])
+plt.ylim([-1, 6])
 plt.xlabel("")
 plt.savefig("images/regOODerror.png")
 

@@ -30,7 +30,7 @@ df = df.assign(data=split[0], column=split[1])
 df = df.drop(columns="index")
 
 # %%
-df.groupby("model").agg(["mean", "std"])
+df.groupby("model").agg(["mean", "std"]).to_csv("results/clas_results.csv")
 
 # %%
 plt.figure(figsize=(15, 9))
