@@ -3,7 +3,8 @@ import pandas as pd
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
-plt.rcParams.update({'font.size': 22})
+
+plt.rcParams.update({"font.size": 22})
 from matplotlib import rcParams
 
 # sns.set_style(style="whitegrid")
@@ -29,7 +30,7 @@ df = df.assign(data=split[0], column=split[1])
 df = df.drop(columns="index")
 
 # %%
-df.groupby("model").agg(['mean','std'])
+df.groupby("model").agg(["mean", "std"])
 
 # %%
 plt.figure(figsize=(15, 9))

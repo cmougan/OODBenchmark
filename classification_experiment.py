@@ -4,19 +4,22 @@ from benchmark import benchmark_experiment
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.svm import SVC
+from sklearn.gaussian_process import GaussianProcessClassifier
 import warnings
 
 warnings.filterwarnings("ignore")
 
-
 # %%
-classification_dataset_names_sample = classification_dataset_names[2:52]
+classification_dataset_names_sample = classification_dataset_names[:100]
 # %%
 
 modelitos = [
     LogisticRegression(),
-    RandomForestClassifier(),
+    SVC(),
+    GaussianProcessClassifier(),
     DecisionTreeClassifier(),
+    RandomForestClassifier(),
     GradientBoostingClassifier(),
 ]
 for m in modelitos:

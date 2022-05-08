@@ -5,7 +5,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from matplotlib import rcParams
-plt.rcParams.update({'font.size': 22})
+
+plt.rcParams.update({"font.size": 22})
 # sns.set_style(style="whitegrid")
 # plt.style.use('seaborn-whitegrid')
 rcParams["axes.labelsize"] = 14
@@ -29,7 +30,7 @@ df = df.assign(data=split[0], column=split[1])
 df = df.drop(columns="index")
 
 # %%
-df.groupby("model").agg(['mean','std'])
+df.groupby("model").agg(["mean", "std"])
 
 # %%
 plt.figure(figsize=(15, 9))
