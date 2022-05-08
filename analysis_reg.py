@@ -41,7 +41,7 @@ plt.title(
 )
 sns.boxplot(data=df, x="model", y="oodError", notch=True)
 plt.grid(True, axis="y")
-plt.ylabel("OOD Performance")
+plt.ylabel("MSE")
 plt.xlabel("")
 plt.savefig("images/regOODperf.png")
 # %%
