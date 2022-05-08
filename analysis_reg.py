@@ -28,7 +28,8 @@ split = df["index"].str.split("_column_", expand=True)
 df = df.assign(data=split[0], column=split[1])
 
 df = df.drop(columns="index")
-
+# %%
+df = df[df["generalizationError"] < 1000]
 # %%
 df.groupby("model").agg(["mean", "std"])
 
