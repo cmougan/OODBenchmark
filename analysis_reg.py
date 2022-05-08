@@ -44,7 +44,7 @@ plt.title(
 sns.boxplot(data=df, x="model", y="oodError", notch=True)
 plt.grid(True, axis="y")
 plt.ylabel("MSE")
-plt.ylim([-1,20])
+plt.ylim([-1,15])
 plt.xlabel("")
 plt.savefig("images/regOODperf.png")
 # %%
@@ -57,7 +57,7 @@ plt.title(
 sns.boxplot(data=df, x="model", y="oodPerformance", notch=True)
 plt.grid(True, axis="y")
 plt.ylabel("OOD Error")
-plt.ylim([-1,20])
+plt.ylim([-1,15])
 plt.xlabel("")
 plt.savefig("images/regOODerror.png")
 
