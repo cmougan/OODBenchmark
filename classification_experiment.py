@@ -16,7 +16,7 @@ classification_dataset_names_sample = classification_dataset_names[:100]
 
 modelitos = [
     LogisticRegression(),
-    SVC(),
+    SVC(probability=True),
     GaussianProcessClassifier(),
     DecisionTreeClassifier(),
     RandomForestClassifier(),
